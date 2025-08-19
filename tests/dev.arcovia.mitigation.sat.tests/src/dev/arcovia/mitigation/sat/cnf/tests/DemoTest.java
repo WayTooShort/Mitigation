@@ -1,6 +1,7 @@
 package dev.arcovia.mitigation.sat.cnf.tests;
 
 import dev.arcovia.mitigation.sat.cnf.CNFTranslation;
+import dev.arcovia.mitigation.sat.cnf.ImprovedCNFTranslation;
 import org.dataflowanalysis.analysis.dsl.AnalysisConstraint;
 import org.dataflowanalysis.analysis.dsl.constraint.ConstraintDSL;
 import org.dataflowanalysis.analysis.dsl.selectors.Intersection;
@@ -8,6 +9,7 @@ import org.dataflowanalysis.analysis.dsl.variable.ConstraintVariable;
 import org.dataflowanalysis.converter.dfd2web.DataFlowDiagramAndDictionary;
 import org.dataflowanalysis.dfd.datadictionary.LabelType;
 import org.dataflowanalysis.examplemodels.Activator;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import tools.mdsd.library.standalone.initialization.StandaloneInitializationException;
 import tools.mdsd.modelingfoundations.identifier.NamedElement;
@@ -18,22 +20,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DemoTest {
 
     private final Logger logger = Logger.getLogger(DemoTest.class);
+    private static DataFlowDiagramAndDictionary dfd;
 
-    @Test
-    public void testCNF() throws StandaloneInitializationException {
+    @BeforeAll
+    public static void setup() throws StandaloneInitializationException {
         String model = "ewolff";
         int variant = 5;
 
         String name = model + "_" + variant;
 
-        var dfd = loadDFD(model, name);
-        var variables = variables(dfd);
-        assertTrue(true);
+        dfd = loadDFD(model, name);
+    }
+
+    @Test
+    public void testCNF() throws StandaloneInitializationException {
 
         AnalysisConstraint constraint = new ConstraintDSL().ofData()
                 .withLabel("Data", "Pos")
@@ -52,25 +58,29 @@ public class DemoTest {
 
         assertTrue(true);
 
-        var translation = new CNFTranslation(constraint, dfd);
+        var translation = new ImprovedCNFTranslation(constraint, dfd);
         translation.initialiseTranslation();
 
         logger.info(translation.formulaToString());
 
         translation.constructCNF();
         logger.info(translation.simpleCNFToString());
+
+        assertTrue(true);
+
+        var simple = new CNFTranslation(constraint, dfd);
+        simple.initialiseTranslation();
+
+        logger.info(simple.formulaToString());
+
+        simple.constructCNF();
+        logger.info(simple.simpleCNFToString());
+
+        assertEquals(simple.cnfToString(), translation.cnfToString());
     }
 
     @Test
     public void testImplementation() throws StandaloneInitializationException {
-        String model = "ewolff";
-        int variant = 5;
-
-        String name = model + "_" + variant;
-
-        var dfd = loadDFD(model, name);
-        var variables = variables(dfd);
-        assertTrue(true);
 
         AnalysisConstraint constraint = new ConstraintDSL().ofData()
                 .withLabel("Monitoring", ConstraintVariable.of("MonitoringDashboard"))
@@ -79,6 +89,7 @@ public class DemoTest {
                 .withLabel("Positivity", List.of("A", "B", "C"))
                 .withoutLabel("Negativity", List.of("A", "B", "C"))
                 .fromNode()
+                .withCharacteristic("Out", "Node")
                 .neverFlows()
                 .toVertex()
                 .withCharacteristic("Role", "Clerk")
@@ -95,13 +106,51 @@ public class DemoTest {
 
         assertTrue(true);
 
-        var translation = new CNFTranslation(constraint, dfd);
+        var translation = new ImprovedCNFTranslation(constraint, dfd);
         translation.initialiseTranslation();
 
         logger.info(translation.formulaToString());
 
         translation.constructCNF();
         logger.info(translation.simpleCNFToString());
+
+        assertTrue(true);
+
+        var simple = new CNFTranslation(constraint, dfd);
+        simple.initialiseTranslation();
+
+        logger.info(simple.formulaToString());
+
+        simple.constructCNF();
+        logger.info(simple.simpleCNFToString());
+
+        assertEquals(simple.cnfToString(), translation.cnfToString());
+    }
+
+    @Test
+    public void performanceTest() throws StandaloneInitializationException {
+        List<String> longList = new ArrayList<>();
+        for (int i = 0; i < 2000; i++) {
+            longList.add(Integer.toString(i));
+        }
+        logger.info("List initialization done.");
+
+        AnalysisConstraint constraint = new ConstraintDSL().ofData()
+                .withLabel("DataLabel", longList)
+                .neverFlows()
+                .toVertex()
+                .withCharacteristic("NodeLabel", longList)
+                .create();
+
+        var translation = new ImprovedCNFTranslation(constraint, dfd);
+        translation.initialiseTranslation();
+
+//        logger.info(translation.formulaToString());
+
+        translation.constructCNF();
+//        logger.info(translation.simpleCNFToString());
+
+        assertTrue(true);
     }
 
     private HashMap<String, List<String>> variables(DataFlowDiagramAndDictionary dfd){
@@ -112,7 +161,7 @@ public class DemoTest {
         return variables;
     }
 
-    private DataFlowDiagramAndDictionary loadDFD(String model, String name) throws StandaloneInitializationException {
+    private static DataFlowDiagramAndDictionary loadDFD(String model, String name) throws StandaloneInitializationException {
         final String PROJECT_NAME = "org.dataflowanalysis.examplemodels";
         final String location = Paths.get("scenarios","dfd", "TUHH-Models")
                 .toString();
