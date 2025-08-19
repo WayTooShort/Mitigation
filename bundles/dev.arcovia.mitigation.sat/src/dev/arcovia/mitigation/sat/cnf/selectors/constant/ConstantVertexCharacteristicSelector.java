@@ -2,6 +2,7 @@ package dev.arcovia.mitigation.sat.cnf.selectors.constant;
 
 import dev.arcovia.mitigation.sat.Label;
 import dev.arcovia.mitigation.sat.NodeLabel;
+import dev.arcovia.mitigation.sat.cnf.LiteralCounter;
 import dev.arcovia.mitigation.sat.cnf.nodes.BranchNode;
 import dev.arcovia.mitigation.sat.cnf.nodes.LiteralNode;
 import org.dataflowanalysis.analysis.dsl.selectors.VertexCharacteristicsSelector;
@@ -14,7 +15,7 @@ public class ConstantVertexCharacteristicSelector implements ConstantDataSelecto
     }
 
     @Override
-    public void addLiterals(BranchNode root, boolean hasOutgoingData, boolean hasIncomingData) {
+    public void addLiterals(BranchNode root, boolean hasOutgoingData, boolean hasIncomingData, LiteralCounter counter) {
         var characteristicType = selector.getCharacteristicsSelectorData().characteristicType();
         var characteristicValue = selector.getCharacteristicsSelectorData().characteristicValue();
 
@@ -30,5 +31,6 @@ public class ConstantVertexCharacteristicSelector implements ConstantDataSelecto
         var values = characteristicValue.values().orElseThrow().get(0);
 
         root.addPredicate(new LiteralNode(selector.isInverted(), new NodeLabel(new Label(type, values))));
+        counter.increment();
     }
 }

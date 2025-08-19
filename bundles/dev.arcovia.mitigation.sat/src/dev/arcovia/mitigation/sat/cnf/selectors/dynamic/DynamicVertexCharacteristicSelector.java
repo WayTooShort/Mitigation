@@ -1,6 +1,7 @@
 package dev.arcovia.mitigation.sat.cnf.selectors.dynamic;
 
 import dev.arcovia.mitigation.sat.Label;
+import dev.arcovia.mitigation.sat.cnf.LiteralCounter;
 import dev.arcovia.mitigation.sat.cnf.nodes.BranchNode;
 import dev.arcovia.mitigation.sat.cnf.selectors.constant.ConstantVertexCharacteristicListSelector;
 import org.dataflowanalysis.analysis.dsl.selectors.CharacteristicsSelectorData;
@@ -33,7 +34,7 @@ public class DynamicVertexCharacteristicSelector implements DynamicDataSelector 
                 )).toList();
         new ConstantVertexCharacteristicListSelector(
                 new VertexCharacteristicsListSelector(null, data, inverted)
-        ).addLiterals(root, hasOutgoingData, hasIncomingData);
+        ).addLiterals(root, hasOutgoingData, hasIncomingData, new LiteralCounter());
     }
 
     @Override

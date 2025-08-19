@@ -1,5 +1,6 @@
 package dev.arcovia.mitigation.sat.cnf.selectors.constant;
 
+import dev.arcovia.mitigation.sat.cnf.LiteralCounter;
 import dev.arcovia.mitigation.sat.cnf.nodes.BranchNode;
 import dev.arcovia.mitigation.sat.cnf.nodes.ConjunctionNode;
 import dev.arcovia.mitigation.sat.cnf.nodes.DisjunctionNode;
@@ -14,12 +15,12 @@ public class ConstantVertexCharacteristicListSelector implements ConstantDataSel
     }
 
     @Override
-    public void addLiterals(BranchNode root, boolean hasOutgoingData, boolean hasIncomingData) {
+    public void addLiterals(BranchNode root, boolean hasOutgoingData, boolean hasIncomingData, LiteralCounter counter) {
         var node = selector.isInverted() ? new ConjunctionNode() : new DisjunctionNode();
         root.addPredicate(node);
         selector.getCharacteristicsSelectorDataList().forEach(it ->
                 new ConstantVertexCharacteristicSelector(
                         new VertexCharacteristicsSelector(null, it, selector.isInverted())
-                ).addLiterals(node, hasOutgoingData, hasIncomingData));
+                ).addLiterals(node, hasOutgoingData, hasIncomingData, counter));
     }
 }

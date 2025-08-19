@@ -3,6 +3,7 @@ package dev.arcovia.mitigation.sat.cnf.nodes;
 import java.util.List;
 
 import dev.arcovia.mitigation.sat.*;
+import dev.arcovia.mitigation.sat.cnf.LiteralCounter;
 
 public class LiteralNode extends LogicNode {
 	private final Literal literal;
@@ -15,7 +16,7 @@ public class LiteralNode extends LogicNode {
 	}
 	
 	@Override
-	public void collectCNFClauses(List<Constraint> result, List<Constraint> activeConstraints) {
+	public void collectCNFClauses(Constraint[] result, List<Constraint> activeConstraints, LiteralCounter allocated) {
         activeConstraints.forEach(it -> it.literals().add(literal));
 	}
 

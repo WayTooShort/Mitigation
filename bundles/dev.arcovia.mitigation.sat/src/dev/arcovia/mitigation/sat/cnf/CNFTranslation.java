@@ -40,12 +40,12 @@ public class CNFTranslation {
         var baseCNF = baseFormula.toCNF();
         var conditionalCNF = conditionalFormula.toCNF();
 
-        if (baseCNF != null && !baseCNF.isEmpty()) {
-            cnf.addAll(baseCNF);
-        }
-        if (conditionalCNF != null && !conditionalCNF.isEmpty()) {
-            cnf.addAll(conditionalCNF);
-        }
+//        if (baseCNF != null && !baseCNF.isEmpty()) {
+//            cnf.addAll(baseCNF);
+//        }
+//        if (conditionalCNF != null && !conditionalCNF.isEmpty()) {
+//            cnf.addAll(conditionalCNF);
+//        }
     }
 
     public void initialiseTranslation() {

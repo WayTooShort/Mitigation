@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dev.arcovia.mitigation.sat.Constraint;
+import dev.arcovia.mitigation.sat.cnf.LiteralCounter;
 
 public class ConjunctionNode extends BranchNode {
 	protected final List<LogicNode> predicates = new ArrayList<LogicNode>();
@@ -18,8 +19,8 @@ public class ConjunctionNode extends BranchNode {
 	}
 
     @Override
-	public void collectCNFClauses(List<Constraint> result, List<Constraint> activeConstraints) {
-		predicates.forEach(it -> it.collectCNFClauses(result, activeConstraints));
+	public void collectCNFClauses(Constraint[] result, List<Constraint> activeConstraints, LiteralCounter allocated) {
+		predicates.forEach(it -> it.collectCNFClauses(result, activeConstraints, allocated));
 	}
 
     @Override

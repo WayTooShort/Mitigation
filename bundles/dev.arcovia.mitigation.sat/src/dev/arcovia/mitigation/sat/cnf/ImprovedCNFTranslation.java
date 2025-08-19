@@ -30,7 +30,7 @@ public class ImprovedCNFTranslation {
 
     private final Map<String, List<String>> variables = new HashMap<>();
 
-    private List<Constraint> cnf;
+    private Constraint[] cnf;
     private BaseFormula baseFormula;
     private BaseFormula conditionalFormula;
 
@@ -44,16 +44,18 @@ public class ImprovedCNFTranslation {
 
     public void constructCNF() {
         initialiseTranslation();
-        cnf = new ArrayList<>();
-        var baseCNF = baseFormula.toCNF();
-        var conditionalCNF = conditionalFormula.toCNF();
+//        cnf = new ArrayList<>();
+        cnf = baseFormula.toCNF();
+        System.out.println("Counter: " + baseFormula.getCounter().count());
+        System.out.println("Allocated: " + baseFormula.getAllocated().count());
+//        var conditionalCNF = conditionalFormula.toCNF();
 
-        if (baseCNF != null && !baseCNF.isEmpty()) {
-            cnf.addAll(baseCNF);
-        }
-        if (conditionalCNF != null && !conditionalCNF.isEmpty()) {
-            cnf.addAll(conditionalCNF);
-        }
+//        if (baseCNF != null && !baseCNF.isEmpty()) {
+//            cnf.addAll(baseCNF);
+//        }
+//        if (conditionalCNF != null && !conditionalCNF.isEmpty()) {
+//            cnf.addAll(conditionalCNF);
+//        }
     }
 
     public void initialiseTranslation() {
@@ -117,7 +119,8 @@ public class ImprovedCNFTranslation {
     private void constructBaseFormula() {
         var root = new ConjunctionNode();
         baseFormula = new BaseFormula(root);
-        constantSelectors.forEach(it -> it.addLiterals(root, hasOutgoingData, hasIncomingData));
+        var counter = baseFormula.getCounter();
+        constantSelectors.forEach(it -> it.addLiterals(root, hasOutgoingData, hasIncomingData, counter));
     }
 
     private void constructConditionalFormula() {
@@ -173,7 +176,7 @@ public class ImprovedCNFTranslation {
     public String getCNFStatistics(List<Literal> literals) {
         StringBuilder s = new StringBuilder();
 
-        s.append("Clauses: ").append(cnf.size()).append("\n");
+        s.append("Clauses: ").append(baseFormula.getCounter().count()).append("\n");
         s.append("Literals: ").append(literals.size()).append("\n");
 
         var longest = 0;
@@ -188,7 +191,7 @@ public class ImprovedCNFTranslation {
 
         s.append("Longest Clause: ").append(longest).append("\n");
         s.append("Total Literals: ").append(totalLiterals).append("\n");
-        s.append("Literals per Clause (avg): ").append((float) (totalLiterals) / cnf.size()).append("\n");
+        s.append("Literals per Clause (avg): ").append((float) (totalLiterals) / (baseFormula.getCounter().count())).append("\n");
         return s.toString();
     }
 }

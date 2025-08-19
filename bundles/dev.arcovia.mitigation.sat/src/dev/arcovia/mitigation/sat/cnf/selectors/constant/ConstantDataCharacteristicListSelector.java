@@ -1,5 +1,6 @@
 package dev.arcovia.mitigation.sat.cnf.selectors.constant;
 
+import dev.arcovia.mitigation.sat.cnf.LiteralCounter;
 import dev.arcovia.mitigation.sat.cnf.nodes.BranchNode;
 import dev.arcovia.mitigation.sat.cnf.nodes.ConjunctionNode;
 import dev.arcovia.mitigation.sat.cnf.nodes.DisjunctionNode;
@@ -14,7 +15,7 @@ public class ConstantDataCharacteristicListSelector implements ConstantDataSelec
     }
 
     @Override
-    public void addLiterals(BranchNode root, boolean hasOutgoingData, boolean hasIncomingData) {
+    public void addLiterals(BranchNode root, boolean hasOutgoingData, boolean hasIncomingData, LiteralCounter counter) {
         var incomingDataNode = selector.isInverted() ? new ConjunctionNode() : new DisjunctionNode();
         var outgoingDataNode = selector.isInverted() ? new ConjunctionNode() : new DisjunctionNode();
         root.addPredicate(incomingDataNode);
@@ -24,7 +25,7 @@ public class ConstantDataCharacteristicListSelector implements ConstantDataSelec
                 new ConstantDataCharacteristicSelector(
                         new DataCharacteristicsSelector(null, it, selector.isInverted())
                 )).toList();
-        dataSelectors.forEach(it -> it.addLiterals(incomingDataNode, hasOutgoingData, false));
-        dataSelectors.forEach(it -> it.addLiterals(outgoingDataNode, false, hasIncomingData));
+        dataSelectors.forEach(it -> it.addLiterals(incomingDataNode, hasOutgoingData, false, counter));
+        dataSelectors.forEach(it -> it.addLiterals(outgoingDataNode, false, hasIncomingData, counter));
     }
 }

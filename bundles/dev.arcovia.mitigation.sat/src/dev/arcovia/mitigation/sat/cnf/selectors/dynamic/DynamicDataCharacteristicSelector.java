@@ -1,6 +1,7 @@
 package dev.arcovia.mitigation.sat.cnf.selectors.dynamic;
 
 import dev.arcovia.mitigation.sat.Label;
+import dev.arcovia.mitigation.sat.cnf.LiteralCounter;
 import dev.arcovia.mitigation.sat.cnf.nodes.BranchNode;
 import dev.arcovia.mitigation.sat.cnf.selectors.constant.ConstantDataCharacteristicListSelector;
 import org.dataflowanalysis.analysis.dsl.selectors.CharacteristicsSelectorData;
@@ -34,7 +35,7 @@ public class DynamicDataCharacteristicSelector implements DynamicDataSelector {
 
         new ConstantDataCharacteristicListSelector(
                 new DataCharacteristicListSelector(null, data, inverted)
-        ).addLiterals(root, hasOutgoingData, hasIncomingData);
+        ).addLiterals(root, hasOutgoingData, hasIncomingData, new LiteralCounter());
     }
 
     @Override
